@@ -35,10 +35,10 @@ void KalmanFilter::Update(const VectorXd &z) {
   // KF Measurement update step
   VectorXd y_ = z - H_*x_;
   VectorXd S_ = H_*P_*H_.transpose() + R_;
-  VectorXd K_ = P_*H_.transpose() * S.inverse();
+  VectorXd K_ = P_*H_.transpose() * S_.inverse();
   
 
-  MatrixXd I = MatrixXd::Identity(P_.size(), P.size());
+  MatrixXd I = MatrixXd::Identity(P_.size(), P_.size());
   // new state
   x_ = x_ + (K_*y_);
   P_ = (I - (K_*H_))*P_;
