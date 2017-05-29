@@ -18,68 +18,59 @@ void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
 }
 
 void KalmanFilter::Predict() {
-  /**
-  TODO:
-    * predict the state
-  */
-  x_ = (F_*x_); // u = 0
-  P_=F_*P_*F_.transpose() + Q_;
+  x_ = F_ * x_;
+  MatrixXd Ft = F_.transpose();
+  P_ = F_ * P_ * Ft + Q_;
 }
 
 void KalmanFilter::Update(const VectorXd &z) {
-  /**
-  TODO:
-    * update the state by using Kalman Filter equations
-  */
-
-  // KF Measurement update step
-  VectorXd y_ = z - H_*x_;
-  VectorXd S_ = H_*P_*H_.transpose() + R_;
-  VectorXd K_ = P_*H_.transpose() * S_.inverse();
-  
-
-  MatrixXd I = MatrixXd::Identity(P_.size(), P_.size());
-  // new state
-  x_ = x_ + (K_*y_);
-  P_ = (I - (K_*H_))*P_;
-
-
+  VectorXd z_pred = H_ * x_;
+  VectorXd y = z - z_pred;
+  MatrixXd Ht = H_.transpose();
+  MatrixXd S = H_ * P_ * Ht + R_;
+  MatrixXd Si = S.inverse();
+  MatrixXd PHt = P_ * Ht;
+  MatrixXd K = PHt * Si;
+    
+  //new estimate
+  x_ = x_ + (K * y);
+  long x_size = x_.size();
+  MatrixXd I = MatrixXd::Identity(x_size, x_size);
+  P_ = (I - K * H_) * P_;
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
-  /**
-  TODO:
-    * update the state by using Extended Kalman Filter equations
-  */
+  //recover state parameters
   float px = x_(0);
   float py = x_(1);
   float vx = x_(2);
   float vy = x_(3);
-
-  // get components of radar measurement space
-  float rho = sqrt(px * px + py * py);
-  float phi = atan2(py, px);
-  float rho_dot = (rho != 0 ? (px * vx + py * vy) / rho : 0);
-
-  // define predicted position and speed
-  VectorXd z_pred(3);
-  z_pred << rho, phi, rho_dot;
-
-  // measurement update
-  VectorXd y = z - z_pred;
-
-  // normalize angle
-  double width = 2 * M_PI;   //
-  double offsetValue = y(1) + M_PI;   // value relative to 0
-  y(1) = (offsetValue - (floor(offsetValue / width) * width)) - M_PI;
-
-  MatrixXd PHt = P_ * H_.transpose();
-  MatrixXd S = H_ * PHt + R_;
-  MatrixXd K = PHt * S.inverse();
-
-  // new state
+    
+  // Equations for h_func below
+  float eq1 = sqrt(px * px + py * py);
+  //check division by zero
+  if(eq1 < .00001) {
+    px += .001;
+    py += .001;
+    eq1 = sqrt(px * px + py * py);
+  }
+  float eq2 = atan2(py,px);
+  float eq3 = (px*vx+py*vy)/eq1;
+    
+  //Feed in equations above
+  VectorXd H_func(3);
+  H_func << eq1, eq2, eq3;
+    
+  VectorXd y = z - H_func;
+  MatrixXd Ht = H_.transpose();
+  MatrixXd S = H_ * P_ * Ht + R_;
+  MatrixXd Si = S.inverse();
+  MatrixXd PHt = P_ * Ht;
+  MatrixXd K = PHt * Si;
+    
+  //new estimate
   x_ = x_ + (K * y);
-  int x_size = x_.size();
+  long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
 }

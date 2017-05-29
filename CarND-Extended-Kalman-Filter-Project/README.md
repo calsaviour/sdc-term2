@@ -25,6 +25,7 @@ Self-Driving Car Engineer Nanodegree Program
 4. Run it: `./ExtendedKF path/to/input.txt path/to/output.txt`. You can find
    some sample inputs in 'data/'.
     - eg. `./ExtendedKF ../data/obj_pose-laser-radar-synthetic-input.txt`
+    - eg windows ExtendedKF.exe ..\data\obj_pose-laser-radar-synthetic-input.txt ..\data\output.txt
 
 ## Editor Settings
 
