@@ -473,7 +473,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   //create matrix for cross correlation Tc
   MatrixXd Tc = MatrixXd(n_x_, n_z);
 
-  // UKF Update for Radar
+  //UKF Update for Radar
 
   //calculate cross correlation matrix
   Tc.fill(0.0);
