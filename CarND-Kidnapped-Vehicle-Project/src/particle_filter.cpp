@@ -19,6 +19,8 @@
 
 using namespace std;
 
+static default_random_engine gen;
+
 void ParticleFilter::init(double x, double y, double theta, double std[]) {
 	// TODO: Set the number of particles. Initialize all particles to first position (based on estimates of 
 	//   x, y, theta and their uncertainties from GPS) and all weights to 1. 
@@ -179,7 +181,32 @@ void ParticleFilter::resample() {
 	// TODO: Resample particles with replacement with probability proportional to their weight. 
 	// NOTE: You may find std::discrete_distribution helpful here.
 	//   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
+	std::vector<Particle> new_particles;
 
+	std::vector<double> weights;
+
+	for(int i = 0; i < num_particles; i++){
+		weights.push_back(particles[i].weight);
+	}
+
+	uniform_int_distribution<int> uniintdist(0, num_particles-1);
+	auto index = uniintdist(gen);
+
+	double max_weight = *max_element(weights.begin(), weights.end());
+
+	uniform_real_distribution<double> unirealdist(0.0, max_weight);
+
+	double beta = 0.0;
+
+	for(int i = 0; i < num_particles; i++) {
+		beta += unirealdist(gen)*2.0;
+		while(beta > weights[index]){
+			beta -= weights[index];
+			index = (index + 1) % num_particles;
+		}
+		new_particles.push_back(particles[index]);
+	}
+	particles = new_particles;
 }
 
 Particle ParticleFilter::SetAssociations(Particle particle, std::vector<int> associations, std::vector<double> sense_x, std::vector<double> sense_y)
