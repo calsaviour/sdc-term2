@@ -16,6 +16,7 @@ public:
   double Kp;
   double Ki;
   double Kd;
+  double total_error;
 
   /*
   * Constructor
