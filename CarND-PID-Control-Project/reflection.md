@@ -1,15 +1,17 @@
 ## Parameter Selection for Steering Angle Only
 
-**Proportional Constant (Kp) - 0.15**
-Started with 0.5 (Ki and Kd set to zero) and then slowly decreasing the value and finally settled at 0.15 to achieve near equal amplitude assuming vehicle is driven on straight road.
+**Proportional Constant (Kp)
+- Ki and Kd set to zero
+Started with 0.5 and then slowly decreasing the value and finally settled at 0.15 to achieve near equal amplitude assuming vehicle is driven on straight road.
 
-*Differential Constant (Kd) - 2.5**
-Set to 3 (Kp set to 0.15 and Ki set to zero) and was slowing decreased to 2.5 to achieve dampening
+*Differential Constant (Kd)
+- Kp set to 0.15 and Ki set to zero
+Set to 3 and was slowing decreased to 2.5 to achieve dampening
 for overshoot due to proportional factor.
 
-**Integral Constant (Ki) - 0.001**
-Vehicle in the simulator did not seem to have a systematic bias and I therefore started with 0 (Kp as 0.15 and Kd as
-as 2.5) and slowly increased it. Increasing the value over 0.003 increased the oscillations and therefore I settle for
+**Integral Constant (Ki)
+- (Kp as 0.15 and Kd as 2.5)
+Vehicle in the simulator did not seem to have a systematic bias and I therefore started with 0 and slowly increased it. Increasing the value over 0.003 increased the oscillations and therefore I settle for
 0.001.
 
 ## Parameter Selection Steering angle and throttle

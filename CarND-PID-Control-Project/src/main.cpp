@@ -31,9 +31,9 @@ int main()
 
   //Initialize the pid variable.
   PID pid;
-  double Kp = 0.2;
+  double Kp = 0.3;
   double Ki = 0.001;
-  double Kd = 2.5;
+  double Kd = 2.7;
   pid.Init(Kp, Ki, Kd);
 
   PID throttle_pid;
