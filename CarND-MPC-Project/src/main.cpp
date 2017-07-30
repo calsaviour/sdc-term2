@@ -103,18 +103,18 @@ int main() {
           vector<double> waypoints_y;
 
           // transform the waypoints to be from car's perspective
-          for(in i = 0; i < ptsx.size(); i++) {
+          for(int i = 0; i < ptsx.size(); i++) {
             double dx = ptsx[i] - px;
             double dy = ptsy[i] - py;
             waypoints_x.push_back(dx * cos(-psi) - dy * sin(-psi));
             waypoints_y.push_back(dx * sin(-psi) + dy * cos(-psi));
           }
 
-          double* ptsx = &waypoints_x[0];
-          double* ptsy = &waypoints_y[0];
+          double* ptrx = &waypoints_x[0];
+          double* ptry = &waypoints_y[0];
 
-          Eigen::Map<Eigen::VectorXd> waypoints_x_eigen(ptsx, 6);
-          Eigen::Map<Eigen::VectorXd> waypoints_y_eigen(ptsy, 6);
+          Eigen::Map<Eigen::VectorXd> waypoints_x_eigen(ptrx, 6);
+          Eigen::Map<Eigen::VectorXd> waypoints_y_eigen(ptry, 6);
 
           auto coeffs = polyfit(waypoints_x_eigen, waypoints_y_eigen, 3);
           double cte = polyeval(coeffs, 0);
@@ -161,7 +161,7 @@ int main() {
           //.. add (x,y) points to list here, points are in reference to the vehicle's coordinate system
           // the points in the simulator are connected by a Yellow line
 
-          for(int i = 0; i < 100l i +=3){
+          for(int i = 0; i < 100; i +=3){
             next_x_vals.push_back(i);
             next_y_vals.push_back(polyeval(coeffs, i));
           }
