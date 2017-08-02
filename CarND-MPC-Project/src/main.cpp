@@ -14,6 +14,31 @@ constexpr double pi() { return M_PI; }
 double deg2rad(double x) { return x * pi() / 180; }
 double rad2deg(double x) { return x * 180 / pi(); }
 
+
+// Convert from X map coordinates to vehicle coordinates
+vector<double> convertXMapCoordinateToVehicleCoordinate(double px, double py, double cos_phi, 
+                                                        double sin_phi, vector<double> ptsx, vector<double> ptsy) {
+  vector<double> next_x_vals;
+  for (unsigned int i = 0; i < ptsx.size(); i++) {
+    double delta_x = ptsx[i] - px;
+    double delta_y = ptsy[i] - py;
+    next_x_vals.push_back(cos_phi * delta_x + sin_phi * delta_y);    
+  }
+  return next_x_vals;
+}
+
+// Convert from Y map coordinates to vehicle coordinates
+vector<double> convertYMapCoordinateToVehicleCoordinate(double px, double py, double cos_phi, 
+                                                        double sin_phi, vector<double> ptsx, vector<double> ptsy) {
+  vector<double> next_y_vals;
+  for (unsigned int i = 0; i < ptsx.size(); i++) {
+    double delta_x = ptsx[i] - px;
+    double delta_y = ptsy[i] - py;
+    next_y_vals.push_back(cos_phi * delta_y - sin_phi * delta_x);  
+  }
+  return next_y_vals;
+}
+
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
 // else the empty string "" will be returned.
@@ -94,17 +119,9 @@ int main() {
           double sin_phi = sin(psi);
 
           // Reference line
-          vector<double> next_x_vals;
-          vector<double> next_y_vals;
-
-          // Convert from map coordinates to vehicle coordinates
-          for (unsigned int i = 0; i < ptsx.size(); i++) {
-            double delta_x = ptsx[i] - px;
-            double delta_y = ptsy[i] - py;
-            next_x_vals.push_back(cos_phi * delta_x + sin_phi * delta_y);
-            next_y_vals.push_back(cos_phi * delta_y - sin_phi * delta_x);
-          }
-
+          vector<double> next_x_vals = convertXMapCoordinateToVehicleCoordinate(px, py, cos_phi, sin_phi, ptsx, ptsy);
+          vector<double> next_y_vals = convertYMapCoordinateToVehicleCoordinate(px, py, cos_phi, sin_phi, ptsx, ptsy);
+          
           // Polynomial Fit
           Eigen::VectorXd ptsx_wrt_car = Eigen::VectorXd::Map(next_x_vals.data(), next_x_vals.size());
           Eigen::VectorXd ptsy_wrt_car = Eigen::VectorXd::Map(next_y_vals.data(), next_y_vals.size());
